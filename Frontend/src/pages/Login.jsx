@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 const Login = () => {
@@ -17,10 +18,6 @@ const Login = () => {
     async function handleSubmit(e) {
         e.preventDefault();
         setSubmitting(true);
-
-
-        console.log(form);
-
         axios.post("http://localhost:3000/users/login", {
             email: form.email,
             password: form.password
@@ -29,10 +26,13 @@ const Login = () => {
                 withCredentials: true
             }
         ).then((res) => {
-            console.log(res);
+            localStorage.setItem('token', res.data.token);
+            toast.success('Login successful!');
             navigate("/");
+
         }).catch((err) => {
             console.error(err);
+            toast.error(err.response.data.message || 'Login failed. Please check your credentials and try again.');
         }).finally(() => {
             setSubmitting(false);
         });
